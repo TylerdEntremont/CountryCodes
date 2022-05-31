@@ -47,7 +47,7 @@ class CountriesList : Fragment() {
                     Toast.makeText(requireContext(), "Loading...", Toast.LENGTH_SHORT).show()
                 }
                 is ResponseState.Success<*> -> {
-                    val data = state.response as List<CountriesItem>
+                    val data = state.response as List<Any>
                     countryAdapter.setNewData(data)
 
                 }

@@ -3,6 +3,7 @@ package com.example.countrycodes.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.countrycodes.model.HeaderItem
 import com.example.countrycodes.network.DataRepository
 import com.example.countrycodes.network.DataRepositoryImpl
 import com.example.countrycodes.utils.ResponseState
@@ -24,7 +25,17 @@ class CountriesViewModel (
                                 val mResponse = countriesRepository.getCountries()
                                 if (mResponse.isSuccessful) {
                                         mResponse.body()?.let {
-                                                _countries.postValue(ResponseState.Success(it))
+                                                val countries = it.sortedBy { it.name }
+                                                val countriesWithHeaders = mutableListOf<Any>()
+                                                var lastLetter=Char.MIN_VALUE
+                                                for (country in countries){
+                                                        if (country.name[0]>lastLetter){
+                                                                countriesWithHeaders.add(HeaderItem(country.name[0].toString()))
+                                                                lastLetter = country.name[0]
+                                                        }
+                                                        countriesWithHeaders.add(country)
+                                                }
+                                                _countries.postValue(ResponseState.Success(countriesWithHeaders))
                                         }
                                                 ?: throw Exception("Response from countries is coming as null")
                                 } else {
